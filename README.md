@@ -60,7 +60,7 @@ $ git remote show   #Выводим branches в консоль
 $ git remote show ${GITHUB_USERNAME}    #Выводим информации о branch
 ```
 
-Работа с Hunter
+####Работа с Hunter
 ```ShellSession
 $ mkdir cmake/projects/print    #Создаем директорию cmake/projects/print
 $ cat > cmake/projects/print/hunter.cmake <<EOF   #Вносим изменения в hunter.cmake
@@ -138,7 +138,7 @@ $ mv gate-0.8.1/cmake/HunterGate.cmake cmake 	#Переносим gate-0.8.1/cma
 $ rm -rf gate*/		#Удаляем директорию gate-0.8.1
 $ rm *.tar.gz		#Удаляем пакет v0.8.1.tar.gz
 ```
-Работа с CMakeLists.txt
+#### Работа с CMakeLists.txt
 ```ShellSession
 $ cat > CMakeLists.txt <<EOF	#Вносим в CMakeLists.txt информацию о минимальной версии CMake и устанавливаем CMAKE_CXX_STANDARD
 cmake_minimum_required(VERSION 3.0)
@@ -154,7 +154,7 @@ $ echo $HUNTER_SHA1	#Выводим контрольную сумму на эк�
 #04aa0c99724692f83d4b47404691e79c16fd5914
 $ rm -rf v0.19.137.1.tar.gz		#Удаляем v0.19.137.1.tar.gz
 ```
-Работа с CMakeLists.txt
+#### Работа с CMakeLists.txt
 ```ShellSession
 $ cat >> CMakeLists.txt <<EOF	#Подключение HunterGate.cmake в CMakeLists.txt
 include(cmake/HunterGate.cmake)
