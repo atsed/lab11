@@ -46,7 +46,7 @@ $ git config --global hub.protocol https
 #### Работа с пакетом девятой лабораторной работы, получение контрольной суммы пакета
 ```ShellSession
 $ wget https://github.com/${GITHUB_USERNAME}/lab09/archive/v0.1.0.0.tar.gz  #Устанавливаем v0.1.0.0.tar.gz
-$ export PRINT_SHA1=`openssl sha1 v0.1.0.0.tar.gz | cut -d'=' -f2 | cut -c2-41` #Экспортируем(04aa0c99724692f83d4b47404691e79c16fd5914)
+$ export PRINT_SHA1=`openssl sha1 v0.1.0.0.tar.gz | cut -d'=' -f2 | cut -c2-41`
 $ echo $PRINT_SHA1  #Выводим контрольную сумму на экран консоли
 $ rm -rf v0.1.0.0.tar.gz  #Удаляем v0.1.0.0.tar.gz
 ```
@@ -151,7 +151,6 @@ EOF
 $ wget https://github.com/${GITHUB_USERNAME}/hunter/archive/v0.19.137.1.tar.gz	#Установка пакета по адресу https://github.com/${GITHUB_USERNAME}/hunter/archive/v0.19.137.1.tar.gz
 $ export HUNTER_SHA1=`openssl sha1 v0.19.137.1.tar.gz | cut -d'=' -f2 | cut -c2-41`	#Экспортируем контрольную сумму
 $ echo $HUNTER_SHA1	#Выводим контрольную сумму на экран консоли
-#04aa0c99724692f83d4b47404691e79c16fd5914
 $ rm -rf v0.19.137.1.tar.gz		#Удаляем v0.19.137.1.tar.gz
 ```
 #### Работа с CMakeLists.txt
