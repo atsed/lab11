@@ -2,7 +2,7 @@
 the demo application redirects data from stdin to a file **log.txt** using a package **print**.
 
 
-## Laboratory work X
+## Laboratory work XI
 Данная лабораторная работа посвещена изучению систем управления пакетами на примере **Hunter**
 
 ```ShellSession
@@ -17,69 +17,90 @@ $ open https://github.com/ruslo/hunter
 - [X] 4. Ознакомиться со ссылками учебного материала
 - [X] 5. Составить отчет и отправить ссылку личным сообщением в **Slack**
 
-
 ## Tutorial
 Делаем первоначальные настройки, добавляя значения переменным окружения
 ```ShellSession
-$ export GITHUB_USERNAME=<имя_пользователя>   #Устанавливаем значение переменной окружения GITHUB_USERNAME
-$ export GITHUB_TOKEN=<сгенирированный_токен>   #Устанавливаем значение переменной окружения GITHUB_TOKEN
+#Устанавливаем значение переменной окружения GITHUB_USERNAME
+$ export GITHUB_USERNAME=desta-study
+#Устанавливаем значение переменной окружения GITHUB_TOKEN
+$ export GITHUB_TOKEN=<сгенирированный_токен>
 ```
-#### Устанавливаем hunter
+Проводим первоначальные настройки, устанавливаем hunter
 ```ShellSession
 $ cd ${GITHUB_USERNAME}/workspace
 $ pushd .
 $ source scripts/activate
 $ go get github.com/github/hub
 ```
-#### Работа с конфигом hub
+Работа с конфигом hub, установка значений переменным окружения
 ```ShellSession
+#Создаем директорию config
 $ mkdir ~/.config
+#Заносим данные в hub(GITHUB_USERNAME, GITHUB_TOKEN)
 $ cat > ~/.config/hub <<EOF
 github.com:
 - user: ${GITHUB_USERNAME}
   oauth_token: ${GITHUB_TOKEN}
   protocol: https
 EOF
+#Устанавливаем глобальное значение hub.protocol
 $ git config --global hub.protocol https
 ```
-
-#### Работа с пакетом девятой лабораторной работы, получение контрольной суммы пакета
+Работа с пакетом девятой лабораторной работы, получение контрольной суммы пакета
 ```ShellSession
-$ wget https://github.com/${GITHUB_USERNAME}/lab09/archive/v0.1.0.0.tar.gz  #Устанавливаем v0.1.0.0.tar.gz
+#Устанавливаем v0.1.0.0.tar.gz
+$ wget https://github.com/${GITHUB_USERNAME}/lab09/archive/v0.1.0.0.tar.gz
 $ export PRINT_SHA1=`openssl sha1 v0.1.0.0.tar.gz | cut -d'=' -f2 | cut -c2-41`
-$ echo $PRINT_SHA1  #Выводим контрольную сумму на экран консоли
-$ rm -rf v0.1.0.0.tar.gz  #Удаляем v0.1.0.0.tar.gz
+#Выводим контрольную сумму на экран консоли
+$ echo $PRINT_SHA1
+#Удаляем v0.1.0.0.tar.gz
+$ rm -rf v0.1.0.0.tar.gz
 ```
-#### Работа с удаленным и локальным репозиторием Hunter
+Работа с удаленным и локальным репозиторием Hunter, просмотр информации о ветках
 ```ShellSession
-$ git clone https://github.com/ruslo/hunter projects/hunter  #Клонируем удаленный репозиторий https://github.com/ruslo/hunter в projects/hunter
-$ cd projects/hunter && git checkout v0.19.137    #Меняем директорию на projects/hunter и переключаемся на ветвь v0.19.137
-$ git remote show   #Выводим branches в консоль
-$ hub fork    #Форкаем репозиторий
-$ git remote show   #Выводим branches в консоль
-$ git remote show ${GITHUB_USERNAME}    #Выводим информации о branch
-```
+#Клонируем удаленный репозиторий https://github.com/ruslo/hunter в projects/hunter
+$ git clone https://github.com/ruslo/hunter projects/hunter
+#Меняем директорию на projects/hunter и переключаемся на ветвь v0.19.137
+$ cd projects/hunter && git checkout v0.19.137
+#Выводим branches в консоль
+$ git remote show //origin
+#Форкаем репозиторий
+$ hub fork
+#Выводим branches в консоль
+$ git remote show 
+#Выводим информации о branch
+$ git remote show ${GITHUB_USERNAME}
 
-####Работа с Hunter
+```
+Работа с Hunter
 ```ShellSession
-$ mkdir cmake/projects/print    #Создаем директорию cmake/projects/print
-$ cat > cmake/projects/print/hunter.cmake <<EOF   #Вносим изменения в hunter.cmake
+#Создаем директорию cmake/projects/print
+$ mkdir cmake/projects/print
+#Вносим изменения в hunter.cmake
+$ cat > cmake/projects/print/hunter.cmake <<EOF
 include(hunter_add_version)
 include(hunter_cacheable)
 include(hunter_cmake_args)
 include(hunter_download)
 include(hunter_pick_scheme)
+#Указываем данные о версии
 hunter_add_version(
+#Имя пакета
     PACKAGE_NAME
     print
+#Версия пакета
     VERSION
     "0.1.0.0"
+#Ссылка на пакет
     URL
     "https://github.com/${GITHUB_USERNAME}/lab09/archive/v0.1.0.0.tar.gz"
+#Контрольная сумма
     SHA1
     ${PRINT_SHA1}
 )
+#Указываем версию по умолчанию
 hunter_pick_scheme(DEFAULT url_sha1_cmake)
+#Указываем hunter_cmake_args
 hunter_cmake_args(
     print
     CMAKE_ARGS
@@ -90,33 +111,46 @@ hunter_cacheable(print)
 hunter_download(PACKAGE_NAME print)
 EOF
 ```
-#### Вносим пакет print в  hunter
+Вносим пакет print в  hunter
 ```ShellSession
-$ cat >> cmake/configs/default.cmake <<EOF  #Вносим данные о пакете print в default.cmake
+#Вносим данные о пакете print в default.cmake
+$ cat >> cmake/configs/default.cmake <<EOF
 hunter_config(print VERSION 0.1.0.0)
 EOF
 
 ```
-#### Работа с локальными и удаленными репозиториями hunter
+Работа с локальными и удаленными репозиториями hunter
 ```ShellSession
-$ git add .   #Добавляем все отредактированные файлы в подтвержденные
-$ git commit -m"added print package"  #Создаем коммит с сообщением
-$ git push ${GITHUB_USERNAME} master    
-$ git tag v0.19.137.1 #Добавляем тэг на нашем репозитории
-$ git push ${GITHUB_USERNAME} master --tags   #Отправляем на удаленную ветку все теги локальной ветки
+#Добавляем все отредактированные файлы в подтвержденные
+$ git add .
+#Создаем коммит с сообщением
+$ git commit -m"added print package"
+Выгружаем локальный репозиторий ветки ${GITHUB_USERNAME} в удаленный репозиторий ветки master
+$ git push ${GITHUB_USERNAME} master
+#Добавляем тэг на нашем репозитории
+$ git tag v0.19.137.1
+#Отправляем на удаленную ветку все теги локальной ветки
+$ git push ${GITHUB_USERNAME} master --tags
+#Выходим из директории
 $ cd ..
 ```
-#### Работа с удаленным репозиторием десятой лабораторной работы
+Работа с удаленным репозиторием десятой лабораторной работы
 ```ShellSession
-$ export HUNTER_ROOT=`pwd`/hunter  #Экспортируем переменную HUNTER_ROOT
-$ mkdir lab10 && cd lab10   #Создаем директорию lab10 и переходим в нее
-$ git init    #Инициализируем локальный репозиторий
-$ git remote add origin https://github.com/${GITHUB_USERNAME}/lab10   #Устанавливаем связь с удаленным репозиторием десятой лабораторной работы
+#Экспортируем переменную HUNTER_ROOT
+$ export HUNTER_ROOT=`pwd`/hunter
+#Создаем директорию lab10 и переходим в нее
+$ mkdir lab10 && cd lab10
+#Инициализируем локальный репозиторий
+$ git init
+#Устанавливаем связь с удаленным репозиторием десятой лабораторной работы
+$ git remote add origin https://github.com/${GITHUB_USERNAME}/lab10
 ```
-#### Работа с файлами(demo.cpp)
+Работа с файлами(demo.cpp)
 ```ShellSession
-$ mkdir sources   #Созданием директории sources
-$ cat > sources/demo.cpp <<EOF  #Создание demo.cpp и запись кода в demo.cpp
+#Созданием директории sources
+$ mkdir sources
+#Создание demo.cpp и запись кода в demo.cpp
+$ cat > sources/demo.cpp <<EOF
 #include <print.hpp>
 
 int main(int argc, char** argv) {
@@ -129,47 +163,66 @@ int main(int argc, char** argv) {
 }
 EOF
 ```
-#### Получение HunterGate.cmake и его перенос в локальный репозиторий
+Получение HunterGate.cmake и его перенос в локальный репозиторий
 ```ShellSession
-$ wget https://github.com/hunter-packages/gate/archive/v0.8.1.tar.gz #Устанавливаем пакет по адресу https://github.com/hunter-packages/gate/archive/v0.8.1.tar.gz 
-$ tar -xzvf v0.8.1.tar.gz gate-0.8.1/cmake/HunterGate.cmake		#Разархивируем его
-$ mkdir cmake		#Создаем директорию cmake
-$ mv gate-0.8.1/cmake/HunterGate.cmake cmake 	#Переносим gate-0.8.1/cmake/HunterGate.cmake в директорию cmake
-$ rm -rf gate*/		#Удаляем директорию gate-0.8.1
-$ rm *.tar.gz		#Удаляем пакет v0.8.1.tar.gz
+#Устанавливаем пакет по адресу https://github.com/hunter-packages/gate/archive/v0.8.1.tar.gz 
+$ wget https://github.com/hunter-packages/gate/archive/v0.8.1.tar.gz 
+#Разархивируем его
+$ tar -xzvf v0.8.1.tar.gz gate-0.8.1/cmake/HunterGate.cmake
+#Создаем директорию cmake
+$ mkdir cmake
+#Переносим gate-0.8.1/cmake/HunterGate.cmake в директорию cmake
+$ mv gate-0.8.1/cmake/HunterGate.cmake cmake
+#Удаляем директорию gate-0.8.1
+$ rm -rf gate*/
+#Удаляем пакет v0.8.1.tar.gz
+$ rm *.tar.gz
 ```
-#### Работа с CMakeLists.txt
+Работа с CMakeLists.txt
 ```ShellSession
-$ cat > CMakeLists.txt <<EOF	#Вносим в CMakeLists.txt информацию о минимальной версии CMake и устанавливаем CMAKE_CXX_STANDARD
+#Вносим в CMakeLists.txt информацию о минимальной версии CMake и устанавливаем CMAKE_CXX_STANDARD
+$ cat > CMakeLists.txt <<EOF
 cmake_minimum_required(VERSION 3.0)
 
 set(CMAKE_CXX_STANDARD 11)
 EOF
 ```
-#### Загрузка пакета, получение контрольной суммы
+Загрузка пакета, получение контрольной суммы
 ```
-$ wget https://github.com/${GITHUB_USERNAME}/hunter/archive/v0.19.137.1.tar.gz	#Установка пакета по адресу https://github.com/${GITHUB_USERNAME}/hunter/archive/v0.19.137.1.tar.gz
-$ export HUNTER_SHA1=`openssl sha1 v0.19.137.1.tar.gz | cut -d'=' -f2 | cut -c2-41`	#Экспортируем контрольную сумму
-$ echo $HUNTER_SHA1	#Выводим контрольную сумму на экран консоли
-$ rm -rf v0.19.137.1.tar.gz		#Удаляем v0.19.137.1.tar.gz
+#Установка пакета по адресу https://github.com/${GITHUB_USERNAME}/hunter/archive/v0.19.137.1.tar.gz
+#В v0.19.137.1.tar.gz содержится пакет print
+$ wget https://github.com/${GITHUB_USERNAME}/hunter/archive/v0.19.137.1.tar.gz
+#Экспортируем контрольную сумму
+$ export HUNTER_SHA1=`openssl sha1 v0.19.137.1.tar.gz | cut -d'=' -f2 | cut -c2-41`
+#Выводим контрольную сумму на экран консоли
+$ echo $HUNTER_SHA1
+#feabd55227870adfe44776d09e09789860e73e35
+#Удаляем v0.19.137.1.tar.gz
+$ rm -rf v0.19.137.1.tar.gz
 ```
-#### Работа с CMakeLists.txt
+Работа с CMakeLists.txt
 ```ShellSession
-$ cat >> CMakeLists.txt <<EOF	#Подключение HunterGate.cmake в CMakeLists.txt
+#Подключение HunterGate.cmake в CMakeLists.txt
+$ cat >> CMakeLists.txt <<EOF
+#Подключение HunterGate.cmake
 include(cmake/HunterGate.cmake)
+#Настройки HunterGate
 HunterGate(
-    URL "https://github.com/${GITHUB_USERNAME}/hunter/archive/v0.19.137.1.tar.gz" 
+#Ссылка на пакет по адресу
+    URL "https://github.com/${GITHUB_USERNAME}/hunter/archive/v0.19.137.1.tar.gz"
+#Контрольная сумма    
     SHA1 "${HUNTER_SHA1}"
 )
 EOF
 ```
-
-#### Работа с CMakeLists.txt
+Работа с CMakeLists.txt
 ```ShellSession
 $ cat >> CMakeLists.txt <<EOF
 
-project(demo)	#Добавляем пакет print
-hunter_add_package(print)	#Находим пакет print
+project(demo)
+#Добавляем пакет print
+hunter_add_package(print)
+#Находим пакет print
 find_package(print)
 
 add_executable(demo \${CMAKE_CURRENT_SOURCE_DIR}/sources/demo.cpp)
@@ -178,7 +231,7 @@ target_link_libraries(demo print)
 install(TARGETS demo RUNTIME DESTINATION bin)
 EOF
 ```
-#### Редактирование .gitignore
+Редактирование .gitignore
 ```ShellSession
 $ cat > .gitignore <<EOF
 *build*/
@@ -186,30 +239,39 @@ $ cat > .gitignore <<EOF
 *.swp
 EOF
 ```
-#### Редактирование README.md
+Редактирование README.md
 ```ShellSession
-$ cat > README.md <<EOF		#Вставка markdown и текста
+#Вставка markdown и текста
+$ cat > README.md <<EOF
+[![Build Status](https://travis-ci.org/${GITHUB_USERNAME}/lab10.svg?branch=master)](https://travis-ci.org/${GITHUB_USERNAME}/lab10)
 the demo application redirects data from stdin to a file **log.txt** using a package **print**.
 EOF
 ```
-#### Редактирование .travis.yml
+Редактирование .travis.yml
 ```ShellSession
-$ cat > .travis.yml <<EOF		#Задаем среду программирования
+$ cat > .travis.yml <<EOF
+#Задаем среду программирования
 language: cpp
+#Параметр script отвечает за дальнейшую сборку проекта
 script:   
 - cmake -H. -B_build
 - cmake --build _build
 EOF
 ```
-#### Работа с Travis
+Работа с Travis
 ```ShellSession
+#Отображаем предупреждения или ошибки в файле .travis.yml
 $ travis lint
+#Hooray, .travis.yml looks valid :)
 ```
-#### Отправка на удаленный репозиторий десятой лабораторной работы
+Отправка на удаленный репозиторий десятой лабораторной работы
 ```ShellSession
-$ git add .		#Добавляем все отредактированные файлы в подтвержденные
-$ git commit -m"first commit"		#Создаем коммит с сообщением
-$ git push origin master		#Выгружаем локальный репозиторий в удаленный репозиторий десятой лабораторной
+#Добавляем все отредактированные файлы в подтвержденные
+$ git add .
+#Создаем коммит с сообщением
+$ git commit -m"first commit"
+#Выгружаем локальный репозиторий в удаленный репозиторий десятой лабораторной
+$ git push origin master
 ```
 Работа с Travis
 ```ShellSession
@@ -218,13 +280,22 @@ $ travis login --auto
 #Включаем репозиторий в Travis
 $ travis enable
 ```
-#### Работа с Cmake
-```
+Работа с Cmake
+```ShellSession
+#-H. устанавливаем каталог в который сгенерируется файл CMakeLists.txt
+#-B_build указывает директорию для собираемых файлов
+#-D - заменяет команду set
 $ cmake -H. -B_build -DCMAKE_INSTALL_PREFIX=_install
+#--build _build создает бинарное дерево проекта
+#--target указывает необходимые для обработки цели
 $ cmake --build _build --target install
-$ mkdir artifacts && cd artifacts		#Создаем директорию artifacts и переходим в нее
+#Создаем директорию artifacts и переходим в нее
+$ mkdir artifacts && cd artifacts
 $ echo "text1 text2 text3" | ../_install/bin/demo
 $ cat log.txt
+text1
+text2
+text3
 ```
 
 ## Report
@@ -249,3 +320,4 @@ $ gistup -m "lab${LAB_NUMBER}"
 ```
 Copyright (c) 2017 Братья Вершинины
 ```
+
